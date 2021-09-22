@@ -1,0 +1,9 @@
+{% for user in users %}
+    <tr>
+        <td class="center">{{ user.sno }}</td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.city }}</td>
+        <td class="center"><button class="edit-btn" id="edit" data-id="{{ user.sno }}" data-name="{{ user.name }}" data-city="{{ user.city }}">Edit</button></td>
+        <td class="center"><button class="delete-btn" id="delete" data-id="{{ user.sno }}">Delete</button></td>
+    </tr>
+{% endfor %}

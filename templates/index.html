@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Flask & Ajax CRUD</title>
+  <link rel="stylesheet" href="../static/css/style.css">
+</head>
+<body>
+  <table id="main" border="0" cellspacing="0">
+    <tr>
+      <td id="header">
+        <h1>Flask REST API CRUD</h1>
+
+        <div id="search-bar">
+          <label>Search :</label>
+          <input type="text" id="search" autocomplete="off">
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td id="table-form">
+        <form id="addForm">
+          Name : <input type="text" name="sname" id="sname">
+          City : <input type="text" name="scity" id="scity">
+          <input type="submit" id="save-button" value="Save">
+        </form>
+      </td>
+    </tr>
+    <tr>
+      <td id="table-data">
+        <table width="100%" cellpadding="10px" >
+          <tr>
+            <th width="40px">Id</th>
+            <th>Name</th>
+            <th width="150px">City</th>
+            <th width="60px">Edit</th>
+            <th width="70px">Delete</th>
+          </tr>
+          <tbody id="load-table">
+            <tr>
+              <td class="center">1</td>
+              <td>Name 1</td>
+              <td>Delhi</td>
+              <td class="center"><button class="edit-btn" data-eid="">Edit</button></td>
+              <td class="center"><button class="delete-btn" data-id="">Delete</button></td>
+            </tr>
+            <tr>
+              <td class="center">2</td>
+              <td>Name 2</td>
+              <td>Agra</td>
+              <td class="center"><button class="edit-btn" data-eid="">Edit</button></td>
+              <td class="center"><button class="delete-btn" data-id="">Delete</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  <div id="error-message" class="messages"></div>
+  <div id="success-message" class="messages"></div>
+
+  <!-- Popup Modal Box for Update the Records -->
+  <div id="modal">
+    <div id="modal-form">
+      <h2>Edit Form</h2>
+      <form action="" id="edit-form">
+      <table cellpadding="10px" width="100%">
+        <tr>
+          <td width="90px">First Name</td>
+          <td><input type="text" name="sname" id="edit-name">
+              <input type="text" name="sid" id="edit-id" hidden="">
+          </td>
+        </tr>
+        <tr>
+          <td>City</td>
+          <td><input type="text" name="scity" id="edit-city"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><input type="button" id="edit-submit" value="Update"></td>
+        </tr>
+      </table>
+      </form>
+      <div id="close-btn">X</div>
+    </div>
+  </div>
+
+<script type="text/javascript" src="../static/jquery.js"></script>
+<script type="text/javascript">
+  //Fetch All Records
+  $(document).ready(function(){
+
+    // load data---------------------------------------------
+    function loaddata(){
+      $.ajax({
+        url : "/loaddata",
+        type : "GET",
+        // data : {page_no : page},
+        success : function(data){
+          $("#load-table").html(data)
+        }
+      });
+    }
+    loaddata();
+  
+    $('#message').hide();
+
+    // $(".alert").alert('close');
+
+    // insert data---------------------------------------------
+    $('#save-button').on("click",function(e){
+    e.preventDefault();
+    var name = $('#sname').val();
+    var city = $('#scity').val();
+    // console.log(name);
+    // console.log(city);
+
+    let data = {
+      "name" : $('#sname').val(),
+      "city" : $('#scity').val()
+    }
+    // console.log(da)
+
+    
+
+    if ( name == "" || city == "") {
+
+        $('#error-message').slideDown();
+        $('#success-message').hide();
+        // $('.alert').alert();
+        $('#error-message').html("All fields are required !");
+
+    }else{
+
+        $.ajax({
+        url : "/insertdata",
+        type : "POST",
+        data : JSON.stringify({name : name, city : city}),
+        // data : JSON.stringify(data),
+        dataType : "json",
+        contentType : "application/json; charset=utf-8",
+        success : function(data){
+            if (data == 1) {
+                loaddata();
+                // $('#message').show();
+                $('#addForm').trigger("reset");
+                $('#error-message').hide();
+                $('#success-message').show();
+                $('#success-message').html("Data has been Saved  !")
+            }else{
+              console.log(data);
+                alert("Can't Save Record.");
+            }
+        }
+      });
+
+    }
+
+
+    });
+
+    // delete data---------------------------------------------
+    $(document).on("click","#delete", function(e){
+
+    if (confirm("Are you sure you want to delete this data!")) {
+       
+        var name_id = $(this).data("id");
+
+        $.ajax({
+            url : "/deletedata",
+            type : "POST",
+            data : JSON.stringify({id : name_id}),
+            dataType : "json",
+            contentType : "application/json; charset=utf-8",
+            success : function(data){
+                if (data == 1) {
+                    loaddata();
+                    // $('#message').show();
+                    $('#error-message').hide();
+                    $('#success-message').slideDown();
+                    $('#error-message').html("Data has been Deleted !")
+                }else{
+                    alert("Can't Delete Record.");
+                }
+            }
+        });
+    }
+
+    });
+
+    // update data---------------------------------------------
+    $(document).on("click","#edit", function(e){
+
+        $('#modal').show();
+        var id = $(this).data("id");
+        var name = $(this).data("name");
+        var city = $(this).data("city");
+
+        $('#edit-id').val(id);
+        $('#edit-name').val(name);
+        $('#edit-city').val(city);
+    
+
+    });
+
+    $(document).on("click", "#close-btn", function(e){
+      $('#modal').hide();
+    });
+
+
+    //Update Record------------------------------------------
+    $(document).on("click", "#edit-submit", function(e){
+        e.preventDefault();
+        // let data = {
+
+        var name_id =  $('#edit-id').val();
+        var name = $('#edit-name').val();
+        var city = $('#edit-city').val();
+
+        // console.log(name_id);
+        // }
+
+        // console.log(data);
+
+        if (name == "" || city == "") {
+
+            $('#error-message').show();
+            $('#error-message').html("All fields are required !");
+
+        }else {
+
+            $.ajax({
+            url : "/updatedata",
+            type : "POST",
+            data : JSON.stringify({id : name_id, name : name, city : city}),
+            dataType : "json",
+            contentType : "application/json; charset=utf-8",
+            success : function(data){
+                if (data == 1) {
+                    loaddata();
+                    $('#message').show();
+                    $('#edit-form').trigger("reset");
+                    $('#modal').hide();
+                    $('#error-message').html("Data has been Saved  !")
+                }else{
+                    alert("Can't Save Record.");
+                }
+            }
+          });
+
+        }
+        // else{ 
+
+        //     $.ajax({
+        //         url : "update-data.php",
+        //         type : "POST",
+        //         data : {id : name_id, first_name : first_name, last_name : last_name},
+        //         success : function(data){
+        //             if (data == 1) {
+        //                 loaddata();
+        //                 $('#message').show();
+        //                 $('#editModal').modal('hide');
+        //                 $('#error-message').html("Data has been Updated !")
+        //             }else{
+        //                 alert("Can't Update Record.");
+        //             }
+        //         }
+        //     });
+        // }
+
+    });
+
+});
+
+  //Fetch Single Record : Show in Modal Box
+
+  //Hide Modal Box
+
+  //Live Search Record
+</script>
+</body>
+</html>
