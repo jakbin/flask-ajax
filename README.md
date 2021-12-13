@@ -1,4 +1,4 @@
-# Flask Ajax Crud
+# Flask Ajax Crud App
 
  ![GitHub Contributors](https://img.shields.io/github/contributors/jakbin/flask-ajax)
  ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/jakbin/flask-ajax)
