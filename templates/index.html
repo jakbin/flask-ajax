@@ -100,9 +100,26 @@
       });
     }
     loaddata();
+
+    function message(msg, status) {
+      if (status == true){
+        $('#error-message').hide();
+        $('#success-message').slideDown();
+        $('#success-message').html(msg);
+        setTimeout(function(){
+          $('#success-message').slideUp();
+        }, 4000);
+      }else{
+        $('#error-message').slideDown();
+        $('#success-message').hide();
+        $('#error-message').html(msg);
+        setTimeout(function(){
+          $('#error-message').slideUp();
+        }, 4000);
+      }
+    }
   
     $('#message').hide();
-    // $(".alert").alert('close');
 
     // insert data---------------------------------------------
     $('#save-button').on("click",function(e){
@@ -111,12 +128,7 @@
       var city = $('#scity').val();
 
       if ( name == "" || city == "") {
-
-          $('#error-message').slideDown();
-          $('#success-message').hide();
-          // $('.alert').alert();
-          $('#error-message').html("All fields are required !");
-
+          message('All fields are required !', false);
       }else{
         $.ajax({
           url : "/insertdata",
@@ -127,13 +139,9 @@
           success : function(data){
               if (data == 1) {
                 loaddata();
-                // $('#message').show();
                 $('#addForm').trigger("reset");
-                $('#error-message').hide();
-                $('#success-message').show();
-                $('#success-message').html("Data has been Saved  !")
+                message('Data has been Saved  !', true);
               }else{
-                console.log(data);
                 alert("Can't Save Record.");
               }
           }
@@ -157,10 +165,7 @@
           success : function(data){
               if (data == 1){
                 loaddata();
-                // $('#message').show();
-                $('#error-message').hide();
-                $('#success-message').slideDown();
-                $('#error-message').html("Data has been Deleted !")
+                message('Data has been Deleted !', true);
               }else{
                 alert("Can't Delete Record.");
               }
@@ -185,7 +190,6 @@
       $('#modal').hide();
     });
 
-
     //Update Record------------------------------------------
     $(document).on("click", "#edit-submit", function(e){
         e.preventDefault();
@@ -195,9 +199,7 @@
         var city = $('#edit-city').val();
 
         if (name == "" || city == "") {
-          $('#error-message').show();
-          $('#error-message').html("All fields are required !");
-
+          message('All fields are required !', false);
         }else {
           $.ajax({
             url : "/updatedata",
@@ -208,41 +210,17 @@
             success : function(data){
                 if (data == 1) {
                   loaddata();
-                  $('#message').show();
-                  $('#edit-form').trigger("reset");
+                  message('Data has been Saved  !', true);
                   $('#modal').hide();
-                  $('#error-message').html("Data has been Saved  !")
                 }else{
                   alert("Can't Save Record.");
                 }
             }
           });
         }
-        // else{ 
-
-        //     $.ajax({
-        //         url : "update-data.php",
-        //         type : "POST",
-        //         data : {id : name_id, first_name : first_name, last_name : last_name},
-        //         success : function(data){
-        //             if (data == 1) {
-        //                 loaddata();
-        //                 $('#message').show();
-        //                 $('#editModal').modal('hide');
-        //                 $('#error-message').html("Data has been Updated !")
-        //             }else{
-        //                 alert("Can't Update Record.");
-        //             }
-        //         }
-        //     });
-        // }
-
     });
 
 });
-
-  //Fetch Single Record : Show in Modal Box
-
   //Hide Modal Box
 
   //Live Search Record

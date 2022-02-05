@@ -31,7 +31,6 @@ def home():
 @app.route("/loaddata")
 def lodadata():
     users = User.query.filter_by().all()
-    # return render_template('loaddata.html', users=users)
     data = user_schema.dump(users,many=True)
     return custom_response(data, 200)
 
@@ -41,8 +40,6 @@ def custom_response(res, status_code):
 @app.route("/insertdata", methods = ['POST'])
 def insertdata():
     data = request.get_json()
-    # print(data)
-    # print(type(data))
     name = data['name']
     city = data['city']
     user = User(name=name, city=city)
@@ -53,7 +50,6 @@ def insertdata():
 @app.route("/updatedata", methods = ['POST'])
 def updatedata():
     data = request.get_json()
-    # print(data)
     sno = data['id']
     name = data['name']
     city = data['city']
@@ -66,7 +62,6 @@ def updatedata():
 @app.route("/deletedata", methods = ['POST'])
 def deletedata():
     data = request.get_json()
-    # print(data)
     sno = data['id']
     user = User.query.filter_by(sno=sno).first_or_404()
     current_ssession  = db.session.object_session(user)

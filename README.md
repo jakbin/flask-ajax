@@ -13,10 +13,10 @@
 - Delete Data
 
 
-## Todo-List 
+## Todo-List
 
 - [ ] Search Data
-- [ ] Pagination Data 
+- [ ] Pagination Data
 - [ ] Image Upload
 - [ ] Login And Logout
-- [ ] Return Json Data
+- [x] Return Json Data
