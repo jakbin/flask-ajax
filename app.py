@@ -1,9 +1,6 @@
-from flask import Flask, render_template, request, session, redirect, flash, url_for
+from flask import Flask, render_template, request, make_response, json, Response
 from flask_sqlalchemy import SQLAlchemy
-import math
-import os
-import json
-from datetime import datetime
+from marshmallow import fields, Schema
 
 app = Flask(__name__)
 app.secret_key = 'super-secret-key'
@@ -20,6 +17,13 @@ class User(db.Model):
     name = db.Column(db.String(80), nullable=False)
     city = db.Column(db.String(80), nullable=False)
 
+class UserSchema(Schema):
+  sno = fields.Int(dump_only=True)
+  name = fields.Str(required=True)
+  city = fields.Str(required=True)
+
+user_schema = UserSchema()
+
 @app.route("/")
 def home():
     return render_template('index.html')
@@ -27,7 +31,12 @@ def home():
 @app.route("/loaddata")
 def lodadata():
     users = User.query.filter_by().all()
-    return render_template('loaddata.html', users=users)
+    # return render_template('loaddata.html', users=users)
+    data = user_schema.dump(users,many=True)
+    return custom_response(data, 200)
+
+def custom_response(res, status_code):
+    return Response(mimetype="application/json",response=json.dumps(res),status=status_code)
 
 @app.route("/insertdata", methods = ['POST'])
 def insertdata():
