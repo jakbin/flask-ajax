@@ -75,122 +75,110 @@
     </div>
   </div>
 
-<script type="text/javascript" src="../static/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script type="text/javascript">
   //Fetch All Records
   $(document).ready(function(){
 
     // load data---------------------------------------------
     function loaddata(){
+      $("#load-table").html('');
       $.ajax({
         url : "/loaddata",
         type : "GET",
-        // data : {page_no : page},
         success : function(data){
-          $("#load-table").html(data)
+          $.each(data, function(key, value){
+            $("#load-table").append('<tr>'+
+                '<td class="center">'+ value.sno +'</td>'+
+                '<td>'+ value.name +'</td>'+
+                '<td>'+ value.city +'</td>'+
+                '<td class="center"><button class="edit-btn" id="edit" data-id="'+ value.sno +'" data-name="'+ value.name +'" data-city="'+ value.city +'">Edit</button></td>'+
+                '<td class="center"><button class="delete-btn" id="delete" data-id="'+ value.sno +'">Delete</button></td>'+
+            '</tr>');
+          });
         }
       });
     }
     loaddata();
   
     $('#message').hide();
-
     // $(".alert").alert('close');
 
     // insert data---------------------------------------------
     $('#save-button').on("click",function(e){
-    e.preventDefault();
-    var name = $('#sname').val();
-    var city = $('#scity').val();
-    // console.log(name);
-    // console.log(city);
+      e.preventDefault();
+      var name = $('#sname').val();
+      var city = $('#scity').val();
 
-    // let data = {
-      // "name" : $('#sname').val(),
-      // "city" : $('#scity').val()
-    // }
-    // console.log(da)
+      if ( name == "" || city == "") {
 
-    
+          $('#error-message').slideDown();
+          $('#success-message').hide();
+          // $('.alert').alert();
+          $('#error-message').html("All fields are required !");
 
-    if ( name == "" || city == "") {
-
-        $('#error-message').slideDown();
-        $('#success-message').hide();
-        // $('.alert').alert();
-        $('#error-message').html("All fields are required !");
-
-    }else{
-
+      }else{
         $.ajax({
-        url : "/insertdata",
-        type : "POST",
-        data : JSON.stringify({name : name, city : city}),
-        dataType : "json",
-        contentType : "application/json; charset=utf-8",
-        // data : JSON.stringify(data),,
-        success : function(data){
-            if (data == 1) {
+          url : "/insertdata",
+          type : "POST",
+          data : JSON.stringify({name : name, city : city}),
+          dataType : "json",
+          contentType : "application/json; charset=utf-8",
+          success : function(data){
+              if (data == 1) {
                 loaddata();
                 // $('#message').show();
                 $('#addForm').trigger("reset");
                 $('#error-message').hide();
                 $('#success-message').show();
                 $('#success-message').html("Data has been Saved  !")
-            }else{
-              console.log(data);
+              }else{
+                console.log(data);
                 alert("Can't Save Record.");
-            }
-        }
-      });
-
-    }
-
-
+              }
+          }
+        });
+      }
     });
 
     // delete data---------------------------------------------
     $(document).on("click","#delete", function(e){
 
-    if (confirm("Are you sure you want to delete this data!")) {
-       
+      if (confirm("Are you sure you want to delete this data!")) {
+         
         var name_id = $(this).data("id");
 
         $.ajax({
-            url : "/deletedata",
-            type : "POST",
-            data : JSON.stringify({id : name_id}),
-            dataType : "json",
-            contentType : "application/json; charset=utf-8",
-            success : function(data){
-                if (data == 1) {
-                    loaddata();
-                    // $('#message').show();
-                    $('#error-message').hide();
-                    $('#success-message').slideDown();
-                    $('#error-message').html("Data has been Deleted !")
-                }else{
-                    alert("Can't Delete Record.");
-                }
-            }
+          url : "/deletedata",
+          type : "POST",
+          data : JSON.stringify({id : name_id}),
+          dataType : "json",
+          contentType : "application/json; charset=utf-8",
+          success : function(data){
+              if (data == 1){
+                loaddata();
+                // $('#message').show();
+                $('#error-message').hide();
+                $('#success-message').slideDown();
+                $('#error-message').html("Data has been Deleted !")
+              }else{
+                alert("Can't Delete Record.");
+              }
+          }
         });
-    }
-
+      }
     });
 
     // update data---------------------------------------------
     $(document).on("click","#edit", function(e){
+      $('#modal').show();
+      var id = $(this).data("id");
+      var name = $(this).data("name");
+      var city = $(this).data("city");
 
-        $('#modal').show();
-        var id = $(this).data("id");
-        var name = $(this).data("name");
-        var city = $(this).data("city");
-
-        $('#edit-id').val(id);
-        $('#edit-name').val(name);
-        $('#edit-city').val(city);
-    
-
+      $('#edit-id').val(id);
+      $('#edit-name').val(name);
+      $('#edit-city').val(city);
     });
 
     $(document).on("click", "#close-btn", function(e){
@@ -201,25 +189,17 @@
     //Update Record------------------------------------------
     $(document).on("click", "#edit-submit", function(e){
         e.preventDefault();
-        // let data = {
 
         var name_id =  $('#edit-id').val();
         var name = $('#edit-name').val();
         var city = $('#edit-city').val();
 
-        // console.log(name_id);
-        // }
-
-        // console.log(data);
-
         if (name == "" || city == "") {
-
-            $('#error-message').show();
-            $('#error-message').html("All fields are required !");
+          $('#error-message').show();
+          $('#error-message').html("All fields are required !");
 
         }else {
-
-            $.ajax({
+          $.ajax({
             url : "/updatedata",
             type : "POST",
             data : JSON.stringify({id : name_id, name : name, city : city}),
@@ -227,17 +207,16 @@
             contentType : "application/json; charset=utf-8",
             success : function(data){
                 if (data == 1) {
-                    loaddata();
-                    $('#message').show();
-                    $('#edit-form').trigger("reset");
-                    $('#modal').hide();
-                    $('#error-message').html("Data has been Saved  !")
+                  loaddata();
+                  $('#message').show();
+                  $('#edit-form').trigger("reset");
+                  $('#modal').hide();
+                  $('#error-message').html("Data has been Saved  !")
                 }else{
-                    alert("Can't Save Record.");
+                  alert("Can't Save Record.");
                 }
             }
           });
-
         }
         // else{ 
 
