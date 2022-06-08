@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, make_response, json, Response
+from flask import Flask, render_template, request, json, Response
 from flask_sqlalchemy import SQLAlchemy
 from marshmallow import fields, Schema
 
@@ -32,6 +32,7 @@ def home():
 def lodadata():
     users = User.query.filter_by().all()
     data = user_schema.dump(users,many=True)
+    print(data)
     return custom_response(data, 200)
 
 def custom_response(res, status_code):
@@ -71,3 +72,4 @@ def deletedata():
 
 if __name__ == "__main__":
     app.run(debug=True)
+    
