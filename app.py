@@ -32,7 +32,6 @@ def home():
 def lodadata():
     users = User.query.filter_by().all()
     data = user_schema.dump(users,many=True)
-    print(data)
     return custom_response(data, 200)
 
 def custom_response(res, status_code):
@@ -69,6 +68,19 @@ def deletedata():
     current_ssession.delete(user)
     current_ssession.commit()
     return  "1"
+
+@app.route("/searchdata")
+def searchdata():
+    search_query = request.args.get('q')
+    search = "%{0}%".format(search_query)
+    dataName =  User.query.filter(User.name.like(search))
+    dataCity =  User.query.filter(User.city.like(search))
+    data = dataName.union(dataCity).all()
+    if data == []:
+        return "0"
+    else:
+        r_data = user_schema.dump(data,many=True)
+        return custom_response(r_data, 200) 
 
 if __name__ == "__main__":
     app.run(debug=True)
