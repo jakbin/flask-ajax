@@ -140,12 +140,12 @@
           dataType : "json",
           contentType : "application/json; charset=utf-8",
           success : function(data){
-              if (data == 1) {
+              if (data.status == true) {
                 loaddata();
                 $('#addForm').trigger("reset");
                 message('Data has been Saved  !', true);
               }else{
-                alert("Can't Save Record.");
+                alert(data.data);
               }
           }
         });
@@ -166,11 +166,11 @@
           dataType : "json",
           contentType : "application/json; charset=utf-8",
           success : function(data){
-              if (data == 1){
+              if (data.data == true){
                 loaddata();
                 message('Data has been Deleted !', true);
               }else{
-                alert("Can't Delete Record.");
+                alert(data.data);
               }
           }
         });
@@ -193,7 +193,6 @@
       $('#modal').hide();
     });
 
-    //Update Record------------------------------------------
     $(document).on("click", "#edit-submit", function(e){
         e.preventDefault();
 
@@ -211,12 +210,12 @@
             dataType : "json",
             contentType : "application/json; charset=utf-8",
             success : function(data){
-                if (data == 1) {
+                if (data.status == true) {
                   loaddata();
                   message('Data has been Saved  !', true);
                   $('#modal').hide();
                 }else{
-                  alert("Can't Save Record.");
+                  alert(data.data);
                 }
             }
           });

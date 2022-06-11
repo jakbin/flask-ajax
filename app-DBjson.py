@@ -27,20 +27,20 @@ def custom_response(res, status_code):
 @app.route("/insertdata", methods = ['POST'])
 def insertdata():
     add_data = request.get_json()
-    db.add(User, add_data)
-    return  "1"
+    res = db.add(User, add_data)
+    return res
 
 @app.route("/updatedata", methods = ['POST'])
 def updatedata():
     update_data = request.get_json()
-    db.update(User, update_data, 'sno')
-    return  "1"
+    res = db.update(User, update_data, 'sno')
+    return res
 
 @app.route("/deletedata", methods = ['POST'])
 def deletedata():
     delete_data = request.get_json()
-    db.delete(User, delete_data)
-    return  "1"
+    res = db.delete(User, delete_data)
+    return res
 
 if __name__ == "__main__":
     app.run(debug=True)
