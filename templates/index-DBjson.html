@@ -88,8 +88,7 @@
         type : "GET",
         dataType: "json",
         success : function(data){
-          var response = JSON.parse(data)
-          console.log(response.data);
+          var response = JSON.parse(data);
           $.each(response.data, function(key, value){
             $("#load-table").append('<tr>'+
                 '<td class="center">'+ value.sno +'</td>'+
@@ -222,9 +221,40 @@
         }
     });
 
-});
+    //Live Search Record------------------------------
+    $(document).on("keyup", "#search", function(e){
+      var search = $('#search').val();
+      if (search == ''){
+        loaddata();
+      }else{
+        $("#load-table").html('');
+        $.ajax({
+          url : "searchdata",
+          type : "POST",
+          data : JSON.stringify({name : search}),
+          dataType : "json",
+          contentType : "application/json; charset=utf-8",
+          success : function(data){
+            if (data.status == false){
+              $("#load-table").html('<tr><td colspan="6" align="center"><h3>No record found</h3></tr></td>');
+            }else{
+              $.each(data.data, function(key, value){
+                $("#load-table").append('<tr>'+
+                    '<td class="center">'+ value.sno +'</td>'+
+                    '<td>'+ value.name +'</td>'+
+                    '<td>'+ value.city +'</td>'+
+                    '<td class="center"><button class="edit-btn" id="edit" data-id="'+ value.sno +'" data-name="'+ value.name +'" data-city="'+ value.city +'">Edit</button></td>'+
+                    '<td class="center"><button class="delete-btn" id="delete" data-id="'+ value.sno +'">Delete</button></td>'+
+                '</tr>');
+              });
+            }
+          }
+        });
+      }
+    });
 
-  //Live Search Record
+  });
+
 </script>
 </body>
 </html>

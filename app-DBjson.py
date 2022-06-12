@@ -42,6 +42,12 @@ def deletedata():
     res = db.delete(User, delete_data)
     return res
 
+@app.route("/searchdata", methods = ['POST'])
+def searchdata():
+    search_data = request.get_json()
+    dataName = db.search(User, search_data)
+    return dataName
+
 if __name__ == "__main__":
     app.run(debug=True)
     
