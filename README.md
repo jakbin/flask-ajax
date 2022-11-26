@@ -14,11 +14,12 @@ There is two app 1st app unses sqlalchemy and 2nd app uses [DBjson](https://gith
 - Update Data
 - Delete Data
 - Search Data
+- Live search Data 
 
 ## Todo-List
 
 - [x] Search Data
-- [ ] Pagination Data
+- [x] Pagination Data
 - [ ] Image Upload
 - [ ] Login And Logout
 - [x] Return Json Data
