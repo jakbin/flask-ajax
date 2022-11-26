@@ -43,6 +43,9 @@
 
           </tbody>
         </table>
+        <div id="pagination">
+      
+        </div>
       </td>
     </tr>
   </table>
@@ -82,13 +85,20 @@
   $(document).ready(function(){
 
     // load data---------------------------------------------
-    function loaddata(){
+    function loaddata(page){
+      if (page == undefined){
+        page =1
+      }
       $("#load-table").html('');
       $.ajax({
         url : "/loaddata",
-        type : "GET",
+        // type : "GEt",
+        type : "POST",
+        data : JSON.stringify({page_num :page}),
+        dataType : "json",
+        contentType : "application/json; charset=utf-8",
         success : function(data){
-          $.each(data, function(key, value){
+          $.each(data.users, function(key, value){
             $("#load-table").append('<tr>'+
                 '<td class="center">'+ value.sno +'</td>'+
                 '<td>'+ value.name +'</td>'+
@@ -97,10 +107,26 @@
                 '<td class="center"><button class="delete-btn" id="delete" data-id="'+ value.sno +'">Delete</button></td>'+
             '</tr>');
           });
+          $("#pagination").html('');
+          for (let i = 1; i <= data.total_pages; i++) {
+            if (i == data.page_num){
+              $("#pagination").append("<a class='active' id="+i+" href=''>"+i+"</a>");
+            }else{
+              $("#pagination").append("<a class='' id="+i+" href=''>"+i+"</a>");
+            }
+          }
         }
       });
     }
     loaddata();
+
+    // paginate data------------------------------------------
+    $(document).on("click","#pagination a",function(e) {
+      e.preventDefault();
+      var page_id = $(this).attr("id");
+
+      loaddata(page_id);
+    })
 
     function message(msg, status) {
       if (status == true){

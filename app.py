@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, json, Response
 from flask_sqlalchemy import SQLAlchemy
 from marshmallow import fields, Schema
+import math
 
 app = Flask(__name__)
 app.secret_key = 'super-secret-key'
@@ -28,10 +29,15 @@ user_schema = UserSchema()
 def home():
     return render_template('index.html')
 
-@app.route("/loaddata")
+@app.route("/loaddata", methods = ['POST'])
 def lodadata():
+    data = request.get_json()
+    page_num = data['page_num']
     users = User.query.filter_by().all()
-    data = user_schema.dump(users,many=True)
+    total_pages = math.ceil(len(users)/5)
+    users_data = users[(int(page_num)-1)*int(5): (int(page_num)-1)*int(5)+ int(5)]
+    users_data = user_schema.dump(users_data, many=True)
+    data = {"users": users_data, "total_pages": total_pages, "page_num":page_num}
     return custom_response(data, 200)
 
 def custom_response(res, status_code):

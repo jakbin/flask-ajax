@@ -176,3 +176,20 @@ h1{
   right: -15px;
   cursor: pointer;
 }
+
+#pagination{
+  text-align: center;
+  padding: 10px;
+}
+#pagination a{
+  background: #2980b9;
+  color: #fff;
+  text-decoration: none;
+  display: inline-block;
+  padding:5px 10px;
+  margin-right: 5px;
+  border-radius: 3px;
+}
+#pagination a.active{
+  background: #27ae60;
+}
