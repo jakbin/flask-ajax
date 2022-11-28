@@ -43,8 +43,9 @@
 
           </tbody>
         </table>
+        
         <div id="pagination">
-      
+          <button class="paginate-btn" id="previous">Previous</button>
         </div>
       </td>
     </tr>
@@ -87,7 +88,7 @@
     // load data---------------------------------------------
     function loaddata(page){
       if (page == undefined){
-        page =1
+        page = 1
       }
       $("#load-table").html('');
       $.ajax({
@@ -108,12 +109,23 @@
             '</tr>');
           });
           $("#pagination").html('');
+          if (data.page_num == 1){
+            $("#pagination").append('<button class="paginate-btn disable-link" id="previous">Previous</button>');
+          }else{
+            $("#pagination").append('<button class="paginate-btn" id="previous">Previous</button>');
+          }
+          
           for (let i = 1; i <= data.total_pages; i++) {
             if (i == data.page_num){
               $("#pagination").append("<a class='active' id="+i+" href=''>"+i+"</a>");
             }else{
               $("#pagination").append("<a class='' id="+i+" href=''>"+i+"</a>");
             }
+          }
+          if (data.page_num == data.total_pages){
+            $("#pagination").append('<button class="paginate-btn disable-link" id="next">Next</button>');
+          }else{
+            $("#pagination").append('<button class="paginate-btn" id="next">Next</button>');
           }
         }
       });
@@ -128,6 +140,21 @@
       loaddata(page_id);
     })
 
+    $(document).on("click", "#previous", function(e){
+      e.preventDefault();
+      var page_id = Number($(".active").attr("id")) - 1 ;
+
+      loaddata(page_id);
+    })
+
+    $(document).on("click", "#next", function(e){
+      e.preventDefault();
+      var page_id = Number($(".active").attr("id")) + 1;
+
+      loaddata(page_id);
+    })
+
+    // show message-------------------------------------------
     function message(msg, status) {
       if (status == true){
         $('#error-message').hide();
