@@ -15,6 +15,7 @@ There is two app 1st app unses sqlalchemy and 2nd app uses [DBjson](https://gith
 - Delete Data
 - Search Data
 - Live search Data 
+- Pagination Data
 
 ## Todo-List
 
